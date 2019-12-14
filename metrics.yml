@@ -1,0 +1,158 @@
+language: ArchiMate
+languageVersion: 3.0
+metrics:
+  - name: Audit findings
+    description: Based on compliance audits, this measure indicates the extent to which the IT adhered to internal and external compliance e.g. SOX, Basel, etc. Number of findings regarding compliance test frameworks.
+    calculate:
+      operator: sum
+      values:
+        - type: simple
+          value: value1
+      valueDefinitions:
+        - id: value1
+          selector:
+            id: FINDING
+            is: Element
+            ofType: Business Object
+            where:
+              queryType: statement
+              query: $FINDING has relation $RELATION to $AUDIT
+              params:
+                - id: AUDIT
+                  is: Element
+                  ofType: Business Object
+                  where:
+                    queryType: statement
+                    query: $AUDIT has relation $RELATIONSHIP to $REGULATION
+                    params:
+                      - id: REGULATION
+                        is: Element
+                        ofType: Contract
+                        where:
+                          queryType: statement
+                          query: $REGULATION has property with name "isRegulation" and value "1"
+                      - id: RELATIONSHIP
+                        is: Relationship
+                        ofType: Association
+                - id: $RELATION
+                  is: Relationship
+                  ofType: Association
+    interpret:
+      measure: "amount"
+      good:
+        - value: "0"
+          relation: "<="
+      normal:
+        - relation: ">"
+          value: "0"
+        - relation: "<="
+          value: "1"
+      bad:
+        - relation: ">"
+          value: "1"
+
+  - name: Backuped key roles
+    description: A measure of how completely qualified personnel has been built up. Number of key roles with qualified backup personnel divided by the total number of key roles.
+    calculate:
+      operator: devide
+      values:
+        - type: simple
+          value: value1
+        - type: simple
+          value: value2
+      valueDefinitions:
+        - id: value1
+          selector:
+            id: BACKUP_PERSONNEL
+            is: Element
+            ofType: Business Actor
+            where:
+              queryType: statement
+              query: $BACKUP_PERSONNEL has relation $BACKUP_RELATION to $KEY_ROLE
+              params:
+                - id: BACKUP_RELATION
+                  is: Relation
+                  ofType: Assignment
+                  where:
+                    queryType: statement
+                    query: $BACKUP_RELATION has name "qualifies for backup"
+                - id: $KEY_ROLE
+                  is: Element
+                  ofType: Business Role
+                  where:
+                    queryType: statement
+                    query: $KEY_ROLE has property with name "isKeyRole" and value "1"
+        - id: value2
+          selector:
+            id: ROLE
+            is: Element
+            ofType: Business Role
+            where:
+              queryType: statement
+              query: $ROLE has property with name "isKeyRole" and value "1"
+    interpret:
+      measure: "%"
+      good:
+        - value: "1.0"
+          relation: ">="
+      normal:
+        - relation: ">="
+          value: "0.5"
+        - relation: "<"
+          value: "1.0"
+      bad:
+        - relation: "<"
+          value: "0.5"
+
+  - name: PM Guideline Adherence
+    description: This measure indicates to which extent IT projects adhered to the PM methodology. Percent of fulfilled PM guideline rules.
+    calculate:
+      operator: devide
+      values:
+        - type: simple
+          value: value1
+        - type: simple
+          value: value2
+      valueDefinitions:
+        - id: value1
+          selector:
+            id: BACKUP_PERSONNEL
+            is: Element
+            ofType: Business Actor
+            where:
+              queryType: statement
+              query: $BACKUP_PERSONNEL has relation $BACKUP_RELATION to $KEY_ROLE
+              params:
+                - id: BACKUP_RELATION
+                  is: Relation
+                  ofType: Assignment
+                  where:
+                    queryType: statement
+                    query: $BACKUP_RELATION has name "qualifies for backup"
+                - id: $KEY_ROLE
+                  is: Element
+                  ofType: Business Role
+                  where:
+                    queryType: statement
+                    query: $KEY_ROLE has property with name "isKeyRole" and value "1"
+        - id: value2
+          selector:
+            id: ROLE
+            is: Element
+            ofType: Business Role
+            where:
+              queryType: statement
+              query: $ROLE has property with name "isKeyRole" and value "1"
+    interpret:
+      measure: "%"
+      good:
+        - value: "1.0"
+          relation: ">="
+      normal:
+        - relation: ">="
+          value: "0.5"
+        - relation: "<"
+          value: "1.0"
+      bad:
+        - relation: "<"
+          value: "0.5"
