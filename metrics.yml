@@ -15,28 +15,32 @@ metrics:
             is: Element
             ofType: Business Object
             where:
-              queryType: statement
-              query: $FINDING has relation $RELATION to $AUDIT
-              params:
-                - id: AUDIT
-                  is: Element
-                  ofType: Business Object
-                  where:
-                    queryType: statement
-                    query: $AUDIT has relation $RELATIONSHIP to $REGULATION
-                    params:
-                      - id: REGULATION
-                        is: Element
-                        ofType: Contract
-                        where:
-                          queryType: statement
-                          query: $REGULATION has property with name "isRegulation" and value "1"
-                      - id: RELATIONSHIP
-                        is: Relationship
-                        ofType: Association
-                - id: $RELATION
-                  is: Relationship
-                  ofType: Association
+              queryType: and
+              queries:
+                - queryType: statement
+                  query: $FINDING has name "Finding"
+                - queryType: statement
+                  query: $FINDING has relation $RELATION to $AUDIT
+                  params:
+                    - id: AUDIT
+                      is: Element
+                      ofType: Business Object
+                      where:
+                        queryType: statement
+                        query: $AUDIT has relation $RELATIONSHIP to $REGULATION
+                        params:
+                          - id: REGULATION
+                            is: Element
+                            ofType: Contract
+                            where:
+                              queryType: statement
+                              query: $REGULATION has property with name "isRegulation" and value "1"
+                          - id: RELATIONSHIP
+                            is: Relationship
+                            ofType: Association
+                    - id: $RELATION
+                      is: Relationship
+                      ofType: Association
     interpret:
       measure: "amount"
       good:
